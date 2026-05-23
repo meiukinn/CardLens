@@ -1,0 +1,20 @@
+[
+  {
+    "profile_id": "card_001",
+    "profile": "Zhiheng Jin",
+    "message": "Great to meet you through CardLens!",
+    "created_at": "2026-05-22T15:35:42"
+  },
+  {
+    "profile_id": "card_001",
+    "profile": "Zhiheng Jin",
+    "message": "Cool idea for connecting physical cards with digital profiles.",
+    "created_at": "2026-05-23T01:07:55"
+  },
+  {
+    "profile_id": "card_001",
+    "profile": "Zhiheng Jin",
+    "message": "The QR scan makes the card feel interactive.",
+    "created_at": "2026-05-23T01:10:54"
+  }
+]

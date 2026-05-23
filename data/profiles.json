@@ -1,0 +1,100 @@
+{
+  "card_001": {
+    "profile_id": "card_001",
+    "first_name": "Zhiheng",
+    "last_name": "Jin",
+    "preferred_name": "Kinn",
+    "title": "",
+    "bio": "Building interactive profile experiences.",
+    "tags": [
+      "Photography",
+      "Gaming",
+      "Football",
+      "Hiking"
+    ],
+    "avatar": "assets/avatars/kinn.png",
+    "highlight_image": "assets/highlights/card_001_highlight.jpg",
+    "pages": [
+      {
+        "id": "card",
+        "type": "card",
+        "heading": "",
+        "links": [
+          {
+            "label": "Email",
+            "value": "meiukinn1024@gmail.com",
+            "url": "mailto:meiukinn1024@gmail.com"
+          },
+          {
+            "label": "GitHub",
+            "value": "github.com/meiukinn",
+            "url": "https://github.com/meiukinn"
+          },
+          {
+            "label": "LinkedIn",
+            "value": "linkedin.com/in/meiukinn1024",
+            "url": "https://linkedin.com/in/meiukinn1024"
+          }
+        ]
+      },
+      {
+        "id": "about",
+        "type": "text",
+        "heading": "About Me",
+        "content": "I'm a curious and creative person who enjoys games, visual design, and exploring new ideas. I'm drawn to immersive experiences, memorable visual style, and small details that change how an interface feels. I like observing, experimenting, and expressing ideas in a way that feels clear and personal."
+      },
+      {
+        "id": "moments",
+        "type": "moments",
+        "heading": "Showcase",
+        "image": "assets/highlights/card_001_highlight.jpg",
+        "caption": ""
+      },
+      {
+        "id": "guestbook",
+        "type": "guestbook",
+        "heading": "Guestbook"
+      }
+    ]
+  },
+  "card_003": {
+    "profile_id": "card_003",
+    "first_name": "Subaru",
+    "last_name": "Awa",
+    "preferred_name": "",
+    "title": "",
+    "bio": "A performing arts student and drummer of TOGENASHI TOGEARI. Friendly and polished on the outside, fiercely competitive underneath. Loves games, the internet, and indoor life.",
+    "tags": [
+      "Gaming",
+      "Drum",
+      "Band"
+    ],
+    "avatar": "assets/avatars/card_003_avatar.jpg",
+    "highlight_image": "",
+    "pages": [
+      {
+        "id": "card",
+        "type": "card",
+        "heading": "",
+        "links": [
+          {
+            "label": "Email",
+            "value": "awasubaru@gmail.com",
+            "url": "mailto:awasubaru@gmail.com"
+          }
+        ]
+      },
+      {
+        "id": "about",
+        "type": "text",
+        "heading": "About Me",
+        "content": "A performing arts student and drummer of TOGENASHI TOGEARI. Friendly and polished on the outside, fiercely competitive underneath. Loves games, the internet, and indoor life."
+      },
+      {
+        "id": "guestbook",
+        "type": "guestbook",
+        "heading": "Guestbook"
+      }
+    ]
+  }
+}
