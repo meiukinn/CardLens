@@ -12,7 +12,7 @@ CardLens is a Python desktop prototype that reads a QR code from a physical card
 ![Pillow](https://img.shields.io/badge/Images-Pillow-2B6CB0)
 ![Theme](https://img.shields.io/badge/Theme-Azure%20ttk%20(MIT)-111827)
 
-<img src="assets/demo_cards/card_001_qr_front.png" alt="CardLens demo card" width="820">
+<img src="assets/demo_cards/cardlens_product_showcase_v9.png" alt="CardLens product showcase" width="920">
 
 </div>
 
