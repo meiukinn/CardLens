@@ -12,7 +12,7 @@ CardLens is a Python desktop prototype that reads a QR code from a physical card
 ![Pillow](https://img.shields.io/badge/Images-Pillow-2B6CB0)
 ![Theme](https://img.shields.io/badge/Theme-Azure%20ttk%20(MIT)-111827)
 
-<img src="assets/demo_cards/cardlens_product_showcase_v9.png" alt="CardLens product showcase" width="920">
+<img src="assets/demo_cards/cardlens_product_showcase_v10.png" alt="CardLens product showcase" width="920">
 
 </div>
 
@@ -47,7 +47,10 @@ Tkinter profile display
 - Displays profile information in a tabbed Tkinter UI.
 - Lets a user create a new CardLens profile.
 - Generates a QR code for the new profile.
+- Supports an optional About page visual from built-in choices or a custom icon image.
 - Supports an optional showcase image and showcase description.
+- Supports optional extra contact links such as GitHub, Instagram, WhatsApp, WeChat, TikTok, Xiaohongshu, and personal websites.
+- Adds a Contact tab automatically when a profile has more than three contact links.
 - Lets a user save contact details as a `.vcf` vCard.
 - Saves guestbook notes per profile in `data/guestbook.json`.
 - Lets a user delete saved local profiles.
@@ -87,6 +90,13 @@ Recognize a card from an image:
 python main.py --image assets/demo_cards/card_001_qr_front.png
 ```
 
+Other included demo card images:
+
+```bash
+python main.py --image assets/demo_cards/card_003_qr_front.png
+python main.py --image assets/demo_cards/card_004_qr_front.png
+```
+
 Recognize a card from webcam:
 
 ```bash
@@ -109,11 +119,15 @@ python main.py --delete
 
 ### QR Recognition
 
-CardLens uses OpenCV's `QRCodeDetector` to read a profile ID from a QR code on the card. The payload can be a plain ID such as `card_001` or a namespaced value such as `CARDLENS:card_001`.
+CardLens uses OpenCV's `QRCodeDetector` to read a profile ID from a QR code on the card. The payload must be a CardLens ID such as `CARDLENS:card_001` or `card_001`, so ordinary website QR codes are not treated as profile IDs.
 
 ### Profile Creation
 
-Creator mode lets the user enter profile details, choose an optional avatar, choose an optional showcase image, write an optional showcase description, and generate a new QR code. The QR code can then be added to a self-designed physical business card.
+Creator mode lets the user enter profile details, choose an optional avatar, choose an optional About page visual, choose an optional showcase image, write an optional showcase description, add optional contact accounts, and generate a new QR code. The QR code can then be added to a self-designed physical business card.
+
+If a user enters more than three contact links, the creator keeps up to three main links on the Profile tab and places the remaining links on a Contact tab. Each contact field has a Main checkbox so the user can choose which contacts appear first.
+
+For most social platforms, users can enter short account names instead of full URLs. For example, entering `kinn.meiu` in the Instagram field becomes an Instagram profile link internally, while the UI only shows the platform name. TikTok and Xiaohongshu use URL fields, and the program adds `https://www.` if the user leaves it out.
 
 ### Digital Profile UI
 
@@ -122,6 +136,7 @@ The recognized profile opens in a Tkinter window using standard `ttk` widgets an
 - Profile tab
 - About tab
 - Optional Showcase tab
+- Optional Contact tab
 - Guestbook tab
 
 The main profile tab uses a small reveal animation made with Tkinter's `after()` method. This keeps the animation simple and reliable.
@@ -156,6 +171,7 @@ CardLens/
 |   +-- demo_cards/
 |   +-- qr_codes/
 |   +-- avatars/
+|   +-- about_visuals/
 |   +-- highlights/
 |   +-- icons/
 ```

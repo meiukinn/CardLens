@@ -6,7 +6,6 @@ The QR code stores a profile ID such as CARDLENS:card_001.
 After decoding, the profile ID is used to load the matching profile.
 """
 
-from pathlib import Path
 import time
 
 import cv2
@@ -59,23 +58,39 @@ class CardRecognizer:
         found_id = None
         window_name = "CardLens - press Q or Esc to quit"
         start_time = time.monotonic()
+        frame_count = 0
+        label = "Looking for a CardLens QR code..."
+        scan_interval = config.WEBCAM_SCAN_EVERY_FRAMES
+        if scan_interval < 1:
+            scan_interval = 1
 
         try:
             cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
             while True:
-                # Read one frame and try to decode a QR code from it.
+                # Read one frame from the webcam preview.
                 ok, frame = cap.read()
                 if not ok:
                     print("[Error] Could not read webcam frame.")
                     self.last_status = "error"
                     break
 
-                profile_id = self._decode_qr(frame)
-                if profile_id:
-                    label = f"Detected: {profile_id}"
-                else:
-                    label = "Looking for a CardLens QR code..."
+                frame_count += 1
+                profile_id = None
+                should_scan = False
+
+                if frame_count == 1:
+                    should_scan = True
+                elif frame_count % scan_interval == 0:
+                    should_scan = True
+
+                if should_scan:
+                    # QR decoding is heavier than preview rendering, so it is not run on every frame.
+                    profile_id = self._decode_qr(frame)
+                    if profile_id:
+                        label = f"Detected: {profile_id}"
+                    else:
+                        label = "Looking for a CardLens QR code..."
 
                 # The text overlay gives the user live feedback during scanning.
                 cv2.putText(
@@ -104,7 +119,7 @@ class CardRecognizer:
                     cv2.waitKey(config.WEBCAM_DETECTION_PAUSE_MS)
                     break
 
-                key = cv2.waitKey(20) & 0xFF
+                key = cv2.waitKey(config.WEBCAM_PREVIEW_WAIT_MS) & 0xFF
                 if key in (ord("q"), 27):
                     self.last_status = "cancelled"
                     break
@@ -220,10 +235,21 @@ class CardRecognizer:
         if payload.startswith(config.QR_PREFIX):
             payload = payload[len(config.QR_PREFIX):].strip()
 
-        if payload:
+        if self._looks_like_profile_id(payload):
             return payload
 
         return None
+
+    def _looks_like_profile_id(self, payload):
+        """Accept CardLens profile IDs such as card_001 and reject ordinary QR links."""
+        if not payload.startswith("card_"):
+            return False
+
+        number_text = payload.replace("card_", "", 1)
+        if not number_text:
+            return False
+
+        return number_text.isdigit()
 
 
 if __name__ == "__main__":

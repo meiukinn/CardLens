@@ -22,6 +22,7 @@ QR_CODES_DIR = ASSETS_DIR / "qr_codes"
 AVATARS_DIR = ASSETS_DIR / "avatars"
 HIGHLIGHTS_DIR = ASSETS_DIR / "highlights"
 ICONS_DIR = ASSETS_DIR / "icons"
+ABOUT_VISUALS_DIR = ASSETS_DIR / "about_visuals"
 
 
 # Window title
@@ -49,6 +50,8 @@ FONT_FAMILY = "Segoe UI"
 CAMERA_INDEX = 0
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
+WEBCAM_PREVIEW_WAIT_MS = 10
+WEBCAM_SCAN_EVERY_FRAMES = 3
 
 
 # QR recognition settings
@@ -69,3 +72,4 @@ if __name__ == "__main__":
     print(f"AVATARS exists:       {AVATARS_DIR.exists()}")
     print(f"HIGHLIGHTS exists:    {HIGHLIGHTS_DIR.exists()}")
     print(f"ICONS exists:         {ICONS_DIR.exists()}")
+    print(f"ABOUT_VISUALS exists: {ABOUT_VISUALS_DIR.exists()}")

@@ -7,6 +7,7 @@ It does not test the webcam because webcam behavior depends on the computer.
 """
 
 import tkinter as tk
+from pathlib import Path
 
 import config
 from card_recognition import CardRecognizer
@@ -35,15 +36,83 @@ def check_profiles():
     return loader
 
 
-def check_default_qr():
-    """Check that the included demo card image can be recognized."""
+def check_recognition_image(loader):
+    """Check that included QR images can be recognized."""
     recognizer = CardRecognizer()
-    result = recognizer.recognize_from_image(config.DEFAULT_DEMO_IMAGE)
-    if not result:
-        raise ValueError("Default demo image could not be recognized.")
+    mismatches = []
 
-    print("[OK] Default QR recognized:", result)
-    return result
+    for card_id in loader.all_card_ids():
+        qr_path = config.QR_CODES_DIR / f"{card_id}.png"
+        if not qr_path.exists():
+            continue
+
+        result = recognizer.recognize_from_image(qr_path)
+        if result != card_id:
+            mismatches.append(f"{qr_path} recognized as {result}")
+
+    if mismatches:
+        for item in mismatches:
+            print("[Mismatch]", item)
+        raise ValueError("Some QR codes do not match their profile IDs.")
+
+    print("[OK] All profile QR codes match their profile IDs.")
+
+    recognized_id = ""
+
+    for demo_path in sorted(config.DEMO_CARDS_DIR.glob("*_qr_front.png")):
+        result = recognizer.recognize_from_image(demo_path)
+        expected = demo_path.name.replace("_qr_front.png", "")
+        if result != expected:
+            raise ValueError(f"Demo image {demo_path.name} recognized as {result}.")
+        print("[OK] Demo card image recognized:", demo_path.name, "=>", result)
+        if not recognized_id:
+            recognized_id = result
+
+    if recognized_id:
+        return recognized_id
+
+    raise ValueError("No included QR or demo image could be recognized.")
+
+
+def check_profile_assets(loader):
+    """Check QR codes and image assets referenced by every saved profile."""
+    missing = []
+
+    for card_id in loader.all_card_ids():
+        qr_path = config.QR_CODES_DIR / f"{card_id}.png"
+        if not qr_path.exists():
+            missing.append(f"missing QR code for {card_id}: {qr_path}")
+
+        profile = loader.get_profile(card_id)
+        if profile is None:
+            continue
+
+        for key in ["avatar", "highlight_image"]:
+            _check_profile_asset(profile.get(key, ""), card_id, key, missing)
+
+        for page in profile.get("pages", []):
+            for key in ["image", "visual"]:
+                _check_profile_asset(page.get(key, ""), card_id, key, missing)
+
+    if missing:
+        for item in missing:
+            print("[Missing]", item)
+        raise FileNotFoundError("Some profile assets are missing.")
+
+    print("[OK] All profile QR codes and image assets exist.")
+
+
+def _check_profile_asset(value, card_id, key, missing):
+    """Add one missing asset message when a stored path does not exist."""
+    if not value:
+        return
+
+    path = Path(value)
+    if not path.is_absolute():
+        path = config.BASE_DIR / path
+
+    if not path.exists():
+        missing.append(f"{card_id} {key}: {path}")
 
 
 def check_profile_window(profile):
@@ -60,11 +129,11 @@ def check_profile_window(profile):
 def main():
     """Run all pre-submission checks in order."""
     check_file(config.PROFILES_JSON, "profiles JSON")
-    check_file(config.DEFAULT_DEMO_IMAGE, "default demo image")
     check_file(config.ASSETS_DIR / "azure_ttk_theme" / "LICENSE", "Azure ttk license")
 
     loader = check_profiles()
-    card_id = check_default_qr()
+    check_profile_assets(loader)
+    card_id = check_recognition_image(loader)
 
     profile = loader.get_profile(card_id)
     if profile is None:

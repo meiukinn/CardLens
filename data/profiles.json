@@ -41,7 +41,8 @@
         "id": "about",
         "type": "text",
         "heading": "About Me",
-        "content": "I'm a curious and creative person who enjoys games, visual design, and exploring new ideas. I'm drawn to immersive experiences, memorable visual style, and small details that change how an interface feels. I like observing, experimenting, and expressing ideas in a way that feels clear and personal."
+        "content": "I'm a curious and creative person who enjoys games, visual design, and exploring new ideas. I'm drawn to immersive experiences, memorable visual style, and small details that change how an interface feels. I like observing, experimenting, and expressing ideas in a way that feels clear and personal.",
+        "visual": "assets/about_visuals/default_1.png"
       },
       {
         "id": "moments",
@@ -88,7 +89,96 @@
         "id": "about",
         "type": "text",
         "heading": "About Me",
-        "content": "A performing arts student and drummer of TOGENASHI TOGEARI. Friendly and polished on the outside, fiercely competitive underneath. Loves games, the internet, and indoor life."
+        "content": "A performing arts student and drummer of TOGENASHI TOGEARI. Friendly and polished on the outside, fiercely competitive underneath. Loves games, the internet, and indoor life.",
+        "visual": "assets/about_visuals/default_2.png"
+      },
+      {
+        "id": "guestbook",
+        "type": "guestbook",
+        "heading": "Guestbook"
+      }
+    ]
+  },
+  "card_004": {
+    "profile_id": "card_004",
+    "first_name": "Mingyu",
+    "last_name": "Jin",
+    "preferred_name": "MJ",
+    "title": "",
+    "bio": "A demo creator profile showing how CardLens can store multiple contact channels and place extra links into a Contact tab.",
+    "tags": [
+      "Creator",
+      "Networking",
+      "Social"
+    ],
+    "avatar": "",
+    "highlight_image": "",
+    "pages": [
+      {
+        "id": "card",
+        "type": "card",
+        "heading": "",
+        "links": [
+          {
+            "label": "Email",
+            "value": "mingyu.jin@example.com",
+            "url": "mailto:mingyu.jin@example.com"
+          },
+          {
+            "label": "LinkedIn",
+            "value": "mingyu-jin",
+            "url": "https://www.linkedin.com/in/mingyu-jin"
+          },
+          {
+            "label": "GitHub",
+            "value": "mingyujin",
+            "url": "https://github.com/mingyujin"
+          }
+        ]
+      },
+      {
+        "id": "about",
+        "type": "text",
+        "heading": "About Me",
+        "content": "A demo creator profile showing how CardLens can store multiple contact channels and place extra links into a Contact tab.",
+        "visual": "assets/about_visuals/default_3.png"
+      },
+      {
+        "id": "contact",
+        "type": "contact",
+        "heading": "More Contacts",
+        "links": [
+          {
+            "label": "Instagram",
+            "value": "mingyu.design",
+            "url": "https://www.instagram.com/mingyu.design/"
+          },
+          {
+            "label": "WhatsApp",
+            "value": "61412345678",
+            "url": "https://wa.me/61412345678"
+          },
+          {
+            "label": "WeChat",
+            "value": "mingyu_cardlens",
+            "url": ""
+          },
+          {
+            "label": "TikTok",
+            "value": "https://www.tiktok.com/@mingyu.demo",
+            "url": "https://www.tiktok.com/@mingyu.demo"
+          },
+          {
+            "label": "Xiaohongshu",
+            "value": "https://www.xiaohongshu.com/user/profile/cardlens-demo",
+            "url": "https://www.xiaohongshu.com/user/profile/cardlens-demo"
+          },
+          {
+            "label": "Personal Website",
+            "value": "mingyujin.example.com",
+            "url": "https://mingyujin.example.com"
+          }
+        ]
       },
       {
         "id": "guestbook",

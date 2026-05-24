@@ -10,7 +10,7 @@ import json
 import config
 
 
-VALID_PAGE_TYPES = ["card", "text", "moments", "guestbook"]
+VALID_PAGE_TYPES = ["card", "text", "moments", "contact", "guestbook"]
 
 
 class ProfileLoader:
@@ -41,16 +41,77 @@ class ProfileLoader:
     def _validate(self):
         """Check that each profile has pages with supported page types."""
         for card_id, profile in self.profiles.items():
-            if "pages" not in profile:
-                raise ValueError(f"Profile '{card_id}' has no 'pages' field.")
+            if not isinstance(profile, dict):
+                raise ValueError(f"Profile '{card_id}' must be a dictionary.")
 
-            for page_number, page in enumerate(profile["pages"]):
+            profile_id = profile.get("profile_id")
+            if profile_id != card_id:
+                raise ValueError(f"Profile '{card_id}' has mismatched profile_id.")
+
+            self._require_string(profile, "first_name", card_id)
+            self._require_string(profile, "last_name", card_id)
+            self._require_string(profile, "bio", card_id)
+
+            pages = profile.get("pages")
+            if not isinstance(pages, list):
+                raise ValueError(f"Profile '{card_id}' must have a list of pages.")
+
+            for page_number, page in enumerate(pages):
+                if not isinstance(page, dict):
+                    raise ValueError(
+                        f"Profile '{card_id}', page {page_number}: page must be a dictionary."
+                    )
+
                 page_type = page.get("type")
                 if page_type not in VALID_PAGE_TYPES:
                     raise ValueError(
                         f"Profile '{card_id}', page {page_number}: "
                         f"invalid type '{page_type}'."
                     )
+
+                self._validate_page(card_id, page_number, page)
+
+    def _require_string(self, data, key, card_id):
+        """Check that one profile field is stored as text."""
+        if not isinstance(data.get(key, ""), str):
+            raise ValueError(f"Profile '{card_id}' field '{key}' must be text.")
+
+    def _validate_page(self, card_id, page_number, page):
+        """Check the basic shape of one profile page."""
+        page_type = page.get("type")
+
+        if page_type in ["card", "contact"]:
+            links = page.get("links", [])
+            if not isinstance(links, list):
+                raise ValueError(
+                    f"Profile '{card_id}', page {page_number}: links must be a list."
+                )
+
+            for link_number, link in enumerate(links):
+                if not isinstance(link, dict):
+                    raise ValueError(
+                        f"Profile '{card_id}', page {page_number}, link {link_number}: "
+                        "link must be a dictionary."
+                    )
+
+                for key in ["label", "value", "url"]:
+                    if not isinstance(link.get(key, ""), str):
+                        raise ValueError(
+                            f"Profile '{card_id}', page {page_number}, link {link_number}: "
+                            f"{key} must be text."
+                        )
+
+        if page_type == "text":
+            if not isinstance(page.get("content", ""), str):
+                raise ValueError(
+                    f"Profile '{card_id}', page {page_number}: content must be text."
+                )
+
+        if page_type == "moments":
+            if not isinstance(page.get("image", ""), str):
+                raise ValueError(
+                    f"Profile '{card_id}', page {page_number}: image must be text."
+                )
 
     def get_profile(self, card_id):
         """Return one profile by card ID."""
@@ -59,26 +120,6 @@ class ProfileLoader:
     def all_card_ids(self):
         """Return all saved card IDs."""
         return list(self.profiles.keys())
-
-    def get_display_name(self, card_id):
-        """Return the best display name for one profile."""
-        profile = self.get_profile(card_id)
-        if not profile:
-            return ""
-
-        display_name = profile.get("display_name")
-        if display_name:
-            return display_name
-
-        preferred_name = profile.get("preferred_name")
-        if preferred_name:
-            return preferred_name
-
-        first_name = profile.get("first_name", "")
-        last_name = profile.get("last_name", "")
-        full_name = f"{first_name} {last_name}".strip()
-        return full_name
-
 
 if __name__ == "__main__":
     # This block is only for checking profile loading from the terminal.

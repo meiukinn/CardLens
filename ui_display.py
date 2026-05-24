@@ -52,6 +52,7 @@ class ProfileDisplay:
         self.status_text = tk.StringVar(value="")
         self.guestbook_text = None
         self.back_to_menu_requested = False
+        self.guestbook_load_error = ""
 
         # These flags stop the first render reveal from playing again after updates.
         self.first_render = True
@@ -137,6 +138,13 @@ class ProfileDisplay:
             tab_frames["Showcase"] = showcase_tab
             self._build_showcase_tab(showcase_tab, showcase_page)
 
+        contact_page = self._page_by_type("contact")
+        if contact_page is not None:
+            contact_tab = ttk.Frame(notebook, padding=22)
+            notebook.add(contact_tab, text="Contact")
+            tab_frames["Contact"] = contact_tab
+            self._build_contact_tab(contact_tab, contact_page)
+
         guestbook_page = self._page_by_type("guestbook")
         if guestbook_page is not None:
             guestbook_tab = ttk.Frame(notebook, padding=22)
@@ -178,13 +186,23 @@ class ProfileDisplay:
             )
         else:
             # Initials are used as a fallback when no avatar image exists.
-            avatar_widget = ttk.Label(
+            avatar_widget = tk.Frame(
                 parent,
-                text=self._initials(),
-                font=(config.FONT_FAMILY, 32, "bold"),
-                width=6,
+                width=120,
+                height=120,
+                bg=config.ACCENT_BLUE_LIGHT,
+                bd=1,
+                relief="solid",
             )
             avatar_widget.grid(row=0, column=0, rowspan=4, sticky="n", padx=(0, 28))
+            avatar_widget.grid_propagate(False)
+            tk.Label(
+                avatar_widget,
+                text=self._initials(),
+                font=(config.FONT_FAMILY, 30, "bold"),
+                fg=config.ACCENT_BLUE,
+                bg=config.ACCENT_BLUE_LIGHT,
+            ).place(relx=0.5, rely=0.5, anchor="center")
         reveal_widgets.append(avatar_widget)
 
         name_label = ttk.Label(
@@ -279,11 +297,9 @@ class ProfileDisplay:
     def _add_contact_button(self, parent, link):
         """Add one contact link button to the profile tab."""
         label = link.get("label", "Link")
-        value = link.get("value", "")
         url = link.get("url", "")
-        text = value
-        if not text:
-            text = label
+        value = link.get("value", "")
+        text = self._display_contact_label(label, value)
         icon = self._load_icon(label)
 
         button_options = {
@@ -301,20 +317,36 @@ class ProfileDisplay:
         """Build the about tab from a text page."""
         heading = page.get("heading", "About Me")
         content = page.get("content", "")
+        visual_value = page.get("visual", "")
+
+        content_frame = ttk.Frame(parent)
+        content_frame.pack(fill="both", expand=True)
+        content_frame.columnconfigure(0, weight=1)
+        content_frame.columnconfigure(1, weight=0)
+        content_frame.rowconfigure(0, weight=1)
+
+        text_frame = ttk.Frame(content_frame)
+        text_frame.grid(row=0, column=0, sticky="nw", padx=(0, 24))
 
         ttk.Label(
-            parent,
+            text_frame,
             text=heading,
             font=(config.FONT_FAMILY, 24, "bold"),
         ).pack(anchor="w", pady=(0, 16))
 
         ttk.Label(
-            parent,
+            text_frame,
             text=content,
             font=(config.FONT_FAMILY, 12),
             wraplength=740,
             justify="left",
         ).pack(anchor="w")
+
+        visual = self._load_image(visual_value, 250, 250, crop=False)
+        if visual:
+            visual_frame = ttk.Frame(content_frame)
+            visual_frame.grid(row=0, column=1, sticky="se")
+            ttk.Label(visual_frame, image=visual).pack()
 
     def _build_showcase_tab(self, parent, page):
         """Build the showcase tab when a profile has a highlight image."""
@@ -367,6 +399,37 @@ class ProfileDisplay:
             wraplength=250,
             justify="left",
         ).pack(anchor="w")
+
+    def _build_contact_tab(self, parent, page):
+        """Build the Contact tab for extra contact links."""
+        heading = page.get("heading", "More Contacts")
+        links = page.get("links", [])
+
+        ttk.Label(
+            parent,
+            text=heading,
+            font=(config.FONT_FAMILY, 24, "bold"),
+        ).pack(anchor="w", pady=(0, 10))
+
+        ttk.Label(
+            parent,
+            text="Additional ways to connect with this profile.",
+            font=(config.FONT_FAMILY, 11),
+        ).pack(anchor="w", pady=(0, 18))
+
+        link_frame = ttk.Frame(parent)
+        link_frame.pack(fill="x", anchor="w")
+
+        if not links:
+            ttk.Label(
+                link_frame,
+                text="No extra contact links.",
+                font=(config.FONT_FAMILY, 10),
+            ).pack(anchor="w")
+            return
+
+        for link in links:
+            self._add_contact_button(link_frame, link)
 
     def _build_guestbook_tab(self, parent, page):
         """Build the guestbook tab for reading and saving notes."""
@@ -467,7 +530,7 @@ class ProfileDisplay:
                     font=(config.FONT_FAMILY, 8),
                 ).pack(anchor="w", pady=(4, 0))
 
-    def _load_image(self, value, width, height):
+    def _load_image(self, value, width, height, crop=True):
         """Load and resize an image for Tkinter display."""
         if not value:
             return None
@@ -482,8 +545,13 @@ class ProfileDisplay:
         try:
             source = Image.open(path).convert("RGB")
 
-            # ImageOps.fit crops and resizes while keeping a neat fixed size.
-            fitted = ImageOps.fit(source, (width, height), method=Image.LANCZOS)
+            if crop:
+                # ImageOps.fit crops and resizes while keeping a neat fixed size.
+                fitted = ImageOps.fit(source, (width, height), method=Image.LANCZOS)
+            else:
+                # ImageOps.contain keeps the whole image visible without cropping.
+                fitted = ImageOps.contain(source, (width, height), method=Image.LANCZOS)
+
             photo = ImageTk.PhotoImage(fitted)
         except OSError:
             return None
@@ -494,19 +562,47 @@ class ProfileDisplay:
     def _load_icon(self, label):
         """Load a small icon based on a contact label."""
         icon_name = self._icon_name(label)
+        if not icon_name:
+            return None
+
         path = config.ICONS_DIR / f"{icon_name}.png"
         if not path.exists():
             return None
 
         try:
             source = Image.open(path).convert("RGBA")
-            source = ImageOps.contain(source, (18, 18), method=Image.LANCZOS)
+            icon_size = self._icon_size(label)
+            source = ImageOps.contain(source, (icon_size, icon_size), method=Image.LANCZOS)
             photo = ImageTk.PhotoImage(source)
         except OSError:
             return None
 
         self.image_refs.append(photo)
         return photo
+
+    def _icon_size(self, label):
+        """Return a larger icon size for small social logos."""
+        text = label.lower()
+        if "tiktok" in text:
+            return 30
+        if "wechat" in text:
+            return 30
+        return 18
+
+    def _display_contact_label(self, label, value=""):
+        """Return the clean platform name shown on contact buttons."""
+        text = label.lower()
+        if "wechat" in text:
+            if value:
+                return "WeChat ID: " + value
+            return "WeChat"
+        if "xiaohongshu" in text:
+            return "Xiaohongshu"
+        if "rednote" in text:
+            return "Xiaohongshu"
+        if "website" in text:
+            return "Personal Website"
+        return label
 
     def _icon_name(self, label):
         """Choose an icon file name from a contact label."""
@@ -515,11 +611,23 @@ class ProfileDisplay:
             return "github"
         if "linkedin" in text:
             return "linkedin"
+        if "instagram" in text:
+            return "instagram"
+        if "whatsapp" in text:
+            return "whatsapp"
+        if "tiktok" in text:
+            return "tiktok"
+        if "rednote" in text:
+            return "rednote"
+        if "xiaohongshu" in text:
+            return "rednote"
+        if "wechat" in text:
+            return "wechat"
         if "email" in text:
             return "email"
         if "mail" in text:
             return "email"
-        return "email"
+        return ""
 
     def _profile_links(self):
         """Return contact links stored on the card page."""
@@ -527,6 +635,19 @@ class ProfileDisplay:
         if card_page is None:
             return []
         return card_page.get("links", [])
+
+    def _all_contact_links(self):
+        """Return profile page links and extra Contact page links together."""
+        links = []
+        for link in self._profile_links():
+            links.append(link)
+
+        contact_page = self._page_by_type("contact")
+        if contact_page is not None:
+            for link in contact_page.get("links", []):
+                links.append(link)
+
+        return links
 
     def _page_by_type(self, page_type):
         """Find the first page with the requested page type."""
@@ -569,29 +690,69 @@ class ProfileDisplay:
         first_name = self.profile.get("first_name", "profile")
         last_name = self.profile.get("last_name", "")
         file_name = (first_name + "_" + last_name).strip("_")
+        file_name = self._safe_file_name(file_name)
         out = desktop / (file_name + ".vcf")
+        out = self._unique_path(out)
 
         lines = [
             "BEGIN:VCARD",
             "VERSION:3.0",
-            "N:" + last_name + ";" + first_name + ";;;",
-            "FN:" + self._full_name(),
-            "NICKNAME:" + self.profile.get("preferred_name", ""),
-            "NOTE:" + self.profile.get("bio", ""),
+            "N:" + self._vcard_escape(last_name) + ";" + self._vcard_escape(first_name) + ";;;",
+            "FN:" + self._vcard_escape(self._full_name()),
+            "NICKNAME:" + self._vcard_escape(self.profile.get("preferred_name", "")),
+            "NOTE:" + self._vcard_escape(self.profile.get("bio", "")),
         ]
 
-        for link in self._profile_links():
+        for link in self._all_contact_links():
             value = link.get("value", "")
             url = link.get("url", "")
             if url.startswith("mailto:"):
                 # vCard uses EMAIL for mail links and URL for web links.
-                lines.append("EMAIL:" + value)
+                lines.append("EMAIL:" + self._vcard_escape(value))
             elif url:
-                lines.append("URL:" + url)
+                lines.append("URL:" + self._vcard_escape(url))
 
         lines.append("END:VCARD")
         out.write_text("\n".join(lines), encoding="utf-8")
         return out
+
+    def _vcard_escape(self, text):
+        """Escape simple vCard text values."""
+        value = str(text)
+        value = value.replace("\\", "\\\\")
+        value = value.replace("\n", "\\n")
+        value = value.replace(";", "\\;")
+        value = value.replace(",", "\\,")
+        return value
+
+    def _unique_path(self, path):
+        """Return a new path if the target file already exists."""
+        if not path.exists():
+            return path
+
+        counter = 2
+        while True:
+            candidate = path.with_name(path.stem + "_" + str(counter) + path.suffix)
+            if not candidate.exists():
+                return candidate
+            counter += 1
+
+    def _safe_file_name(self, text):
+        """Return a Windows safe file name for exported contact files."""
+        safe_text = ""
+        for character in text:
+            if character.isalnum():
+                safe_text = safe_text + character
+            elif character in [" ", "_", "-"]:
+                safe_text = safe_text + character
+            else:
+                safe_text = safe_text + "_"
+
+        safe_text = safe_text.strip()
+        if safe_text:
+            return safe_text
+
+        return "CardLens_contact"
 
     def _save_guestbook_note(self):
         """Save a guestbook note for the current profile."""
@@ -604,6 +765,10 @@ class ProfileDisplay:
             return
 
         notes = self._load_all_guestbook_notes()
+        if notes is None:
+            self.status_text.set(self.guestbook_load_error)
+            return
+
         notes.append(
             {
                 # profile_id keeps notes separate even if two profiles share a name.
@@ -635,18 +800,26 @@ class ProfileDisplay:
         try:
             text = config.GUESTBOOK_JSON.read_text(encoding="utf-8")
             data = json.loads(text)
-        except OSError:
-            return []
+        except OSError as exc:
+            self.guestbook_load_error = "Could not read guestbook.json: " + str(exc)
+            return None
         except json.JSONDecodeError:
-            return []
+            self.guestbook_load_error = "guestbook.json is not valid JSON. Please fix it before saving notes."
+            return None
 
         if isinstance(data, list):
+            self.guestbook_load_error = ""
             return data
-        return []
+
+        self.guestbook_load_error = "guestbook.json must contain a list of notes."
+        return None
 
     def _load_guestbook_notes(self):
         """Return only the guestbook notes for the current profile."""
         data = self._load_all_guestbook_notes()
+        if data is None:
+            return []
+
         notes = []
         current_profile_id = self._profile_key()
         current_name = self._full_name()

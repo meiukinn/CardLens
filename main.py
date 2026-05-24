@@ -369,6 +369,9 @@ def _delete_profile_files(profile_id):
     for path in config.HIGHLIGHTS_DIR.glob(f"{profile_id}_highlight.*"):
         _delete_file(path)
 
+    for path in config.ABOUT_VISUALS_DIR.glob(f"{profile_id}_about_visual.*"):
+        _delete_file(path)
+
 
 def _delete_guestbook_notes(profile_id, profile_name):
     """Remove guestbook notes that belong to the deleted profile."""
