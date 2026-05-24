@@ -592,6 +592,10 @@ class ProfileDisplay:
     def _display_contact_label(self, label, value=""):
         """Return the clean platform name shown on contact buttons."""
         text = label.lower()
+        if "email" in text:
+            if value:
+                return value
+            return "Email"
         if "wechat" in text:
             if value:
                 return "WeChat ID: " + value

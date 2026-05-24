@@ -56,9 +56,110 @@ Tkinter profile display
 - Lets a user delete saved local profiles.
 - Reveals the main profile content with a small Tkinter `after()` animation.
 
-## Quick Start
+## Libraries Used
 
-Install the required libraries:
+This project is written in Python. The main libraries and modules used are:
+
+- `tkinter` and `ttk` for the desktop user interface. These are included with standard Python on most installations.
+- `opencv-python` for reading QR codes from image files and webcam frames.
+- `Pillow` for loading, resizing, and displaying images.
+- `qrcode[pil]` for generating new CardLens QR codes.
+- `json` for storing profile data and guestbook notes. This is a built-in Python module.
+- `pathlib` for handling file paths. This is a built-in Python module.
+- `webbrowser` for opening contact links. This is a built-in Python module.
+- Azure ttk theme for the visual style. The theme files are already included in `assets/azure_ttk_theme/`.
+
+The external libraries are listed in `requirements.txt`:
+
+```text
+opencv-python>=4.8.0
+Pillow>=10.0.0
+qrcode[pil]>=7.4
+```
+
+## Step-by-Step Run Guide
+
+These steps show how to run CardLens on another laptop.
+
+### 1. Install Python
+
+Install Python 3.9 or later from:
+
+```text
+https://www.python.org/downloads/
+```
+
+During installation on Windows, select `Add Python to PATH`.
+
+### 2. Open the project folder
+
+Open PowerShell or Terminal and move into the CardLens folder:
+
+```bash
+cd CardLens
+```
+
+If the folder is on the desktop, the command may look like this:
+
+```bash
+cd Desktop/CardLens
+```
+
+### 3. Install the required libraries
+
+Run:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Start the program
+
+Run the interactive menu:
+
+```bash
+python main.py
+```
+
+The menu allows the user to:
+
+- choose an image file
+- use a webcam
+- create a new CardLens profile
+- delete a saved local profile
+- exit the program
+
+### 5. Test with an included demo card image
+
+From the menu, choose `Choose Image File`, then select one of these included images:
+
+```bash
+assets/demo_cards/card_001_qr_front.png
+assets/demo_cards/card_003_qr_front.png
+assets/demo_cards/card_004_qr_front.png
+```
+
+The program should recognize the QR code and open the matching digital profile.
+
+### 6. Optional webcam test
+
+From the menu, choose `Use Webcam`.
+
+The webcam mode works with any camera recognized by the computer as a webcam, such as a laptop camera, USB webcam, or external camera connected through webcam software or a capture card.
+
+Press `Q` or `Esc` to close the webcam window.
+
+### 7. Optional project check
+
+Run this command to check that the main files and demo QR images are working:
+
+```bash
+python run_check.py
+```
+
+## Quick Command Summary
+
+Install libraries:
 
 ```bash
 pip install -r requirements.txt
@@ -68,12 +169,6 @@ Run the interactive menu:
 
 ```bash
 python main.py
-```
-
-Run the project check before submission:
-
-```bash
-python run_check.py
 ```
 
 ## Run Modes

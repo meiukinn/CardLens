@@ -121,18 +121,18 @@
         "links": [
           {
             "label": "Email",
-            "value": "mingyu.jin@example.com",
-            "url": "mailto:mingyu.jin@example.com"
+            "value": "zhihengjin01@outlook.com",
+            "url": "mailto:zhihengjin01@outlook.com"
           },
           {
             "label": "LinkedIn",
-            "value": "mingyu-jin",
-            "url": "https://www.linkedin.com/in/mingyu-jin"
+            "value": "meiukinn1024",
+            "url": "https://www.linkedin.com/in/meiukinn1024"
           },
           {
             "label": "GitHub",
-            "value": "mingyujin",
-            "url": "https://github.com/mingyujin"
+            "value": "meiukinn",
+            "url": "https://github.com/meiukinn"
           }
         ]
       },
@@ -150,33 +150,33 @@
         "links": [
           {
             "label": "Instagram",
-            "value": "mingyu.design",
-            "url": "https://www.instagram.com/mingyu.design/"
-          },
-          {
-            "label": "WhatsApp",
-            "value": "61412345678",
-            "url": "https://wa.me/61412345678"
+            "value": "kinn.meiu",
+            "url": "https://www.instagram.com/kinn.meiu/"
           },
           {
             "label": "WeChat",
-            "value": "mingyu_cardlens",
+            "value": "meiukinn1024",
             "url": ""
           },
           {
+            "label": "WhatsApp",
+            "value": "8618302363311",
+            "url": "https://wa.me/8618302363311"
+          },
+          {
             "label": "TikTok",
-            "value": "https://www.tiktok.com/@mingyu.demo",
-            "url": "https://www.tiktok.com/@mingyu.demo"
+            "value": "https://www.douyin.com/user/self?from_tab_name=main",
+            "url": "https://www.douyin.com/user/self?from_tab_name=main"
           },
           {
             "label": "Xiaohongshu",
-            "value": "https://www.xiaohongshu.com/user/profile/cardlens-demo",
-            "url": "https://www.xiaohongshu.com/user/profile/cardlens-demo"
+            "value": "https://www.xiaohongshu.com/user/profile/5e4d023600000000010047dd",
+            "url": "https://www.xiaohongshu.com/user/profile/5e4d023600000000010047dd"
           },
           {
             "label": "Personal Website",
-            "value": "mingyujin.example.com",
-            "url": "https://mingyujin.example.com"
+            "value": "https://meiukinn.com/",
+            "url": "https://meiukinn.com/"
           }
         ]
       },
