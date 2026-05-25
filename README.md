@@ -20,6 +20,8 @@ CardLens is a Python desktop prototype that reads a QR code from a physical card
 
 ## Overview
 
+CardLens is a Python desktop application that connects a physical card to an interactive digital profile. The idea is that a business card, resume, portfolio should not only contain printed text. By adding a CardLens QR marker, the physical card can open a richer digital profile.
+
 CardLens connects a printed card with a richer digital profile.
 
 The current prototype uses a QR code as the recognition marker. This keeps the demo stable for classroom testing because it works with either a webcam or an image file, without requiring special lighting or a printed card to be available.
